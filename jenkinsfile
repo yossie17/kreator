@@ -1,3 +1,4 @@
+def inputCSVPath = null
 pipeline {
    agent any
    stages {
@@ -5,21 +6,23 @@ pipeline {
         stage('Upload a compose file') {
         steps {
              script {
-                def inputCSVPath = input message: 'Upload file', parameters: [file(name: 'docker-compose.yaml', description: 'Upload only compose file')]
+                inputCSVPath = input message: 'Upload file', parameters: [file(name: 'docker-compose.yaml', description: 'Upload only compose file')]
                 def csvContent = readFile "${inputCSVPath}"
                 echo ("CSV FILE PATH IS : ${inputCSVPath}")
                 echo("CSV CONTENT IS: ${csvContent}") 
             }
         }
     }
-    stage("convert compose file to k8s yml"){
-        steps{
-            script{
-                sh "env"
-                // sh "kompose convert -f"
+
+        stage("convert compose file to k8s yml"){
+            steps{
+                script{
+                    sh "env"
+                    sh "kompose convert -f ${inputCSVPath}"
+                    sh " ls -la"
+                }
             }
-        }
-    }
+}
        
     }
 }
