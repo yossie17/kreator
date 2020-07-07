@@ -20,6 +20,7 @@ pipeline {
                     sh "env"
                     sh "kompose convert -f ${inputCSVPath}"
                     sh " ls -la"
+                    archiveArtifacts artifacts: '*.yaml', fingerprint: true
                 }
             }
 }
