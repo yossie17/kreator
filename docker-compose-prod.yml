@@ -1,0 +1,93 @@
+version: '2'
+
+services:
+
+ server-node:
+    build:
+      context: .
+      dockerfile: server/docker/Dockerfilenode
+    container_name: server-node
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server/app:/app
+      - '/app/node_modules'
+    restart: always
+
+
+ angular-nginx-prod:
+    container_name: angular-nginx-con
+    build:
+      context: .
+      dockerfile: client/docker/Dockerfile-angular-prod
+    volumes:
+    - ./nginx/nginx-prod:/etc/nginx/conf.d
+    - letsencrypt_certs:/etc/nginx/certs
+    ports:
+    - "80:80"
+    - "443:443"
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=80
+      - GENERATE_SOURCEMAP=false
+    depends_on:
+      - server-node
+  
+#  react-nginx-prod:
+#     container_name: react-nginx-con
+#     build:
+#       context: .
+#       dockerfile: client/docker/Dockerfile-react-prod
+#     volumes:
+#     - ./nginx/nginx-prod:/etc/nginx/conf.d
+#     - letsencrypt_certs:/etc/nginx/certs
+#     ports:
+#     - "80:80"
+#     - "443:443"
+#     restart: always
+#     environment:
+#       - NODE_ENV=production
+#       - PORT=80
+#       - GENERATE_SOURCEMAP=false
+#     depends_on:
+#       - server-node
+    
+ mysql:
+    image: mysql:5.7
+    volumes:
+       - db_data:/var/lib/mysql
+       - ./mysql:/docker-entrypoint-initdb.d
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+       MYSQL_ROOT_PASSWORD: root
+       MYSQL_USER: root
+       MYSQL_DATABASE: app
+    container_name: mysql-con
+
+
+#  postgres:
+#     image: postgres:latest
+#     container_name: postgres-con
+#     restart: always
+#     environment:
+#       POSTGRES_DB: app
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+#     ports:
+#       - 5432:5432
+#     volumes:
+#       - database_data_gp:/var/lib/postgresql/data
+
+
+volumes:
+    db_data:
+    # database_data_gp:
+    letsencrypt_certs:
+
+
+
+      

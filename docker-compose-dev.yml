@@ -1,0 +1,56 @@
+version: '2'
+
+services:
+
+ server-node:
+    build:
+      context: .
+      dockerfile: server/docker/Dockerfilenode
+    container_name: node_con
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server/app:/app
+      - '/app/node_modules'
+    restart: always
+
+
+ angular:
+    container_name: angular-con
+    build:
+      context: .
+      dockerfile: client/docker/Dockerfile-angular
+    volumes:
+      - './client/app:/usr/src/app'
+      - '/usr/src/app/node_modules'
+    ports:
+      - '4200:4200'
+    restart: always
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+  
+    
+ mysql:
+    image: mysql:5.7
+    volumes:
+       - db_data:/var/lib/mysql
+       - ./mysql:/docker-entrypoint-initdb.d
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+       MYSQL_ROOT_PASSWORD: root
+       MYSQL_USER: root
+       MYSQL_DATABASE: app
+    container_name: mysql_con
+
+
+
+volumes:
+    db_data:
+    database_data_gp:
+
+
+
+      
