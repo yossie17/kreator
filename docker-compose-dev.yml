@@ -21,10 +21,11 @@ services:
       context: .
       dockerfile: client/docker/Dockerfile-angular
     volumes:
-      - './client/app:/usr/src/app'
+      - './client/angular:/usr/src/app'
       - '/usr/src/app/node_modules'
     ports:
       - '4200:4200'
+    # command: ping 8.8.8.8
     restart: always
     environment:
       - CHOKIDAR_USEPOLLING=true
