@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:14.5.0 
 
 # Create app directory
 RUN mkdir /app
@@ -11,7 +11,7 @@ ENV PATH /admin/node_modules/.bin:$PATH
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 # COPY package*.json ./
-COPY ./server/app/package.json/ /app/package.json
+COPY ./server/backend/package.json/ /app/package.json
 
 RUN npm install
 # If you are building your code for production
@@ -21,5 +21,5 @@ RUN npm install
 # COPY . .
 # COPY /app/ /app
 
-EXPOSE 8080
+EXPOSE 3000
 CMD [ "npm", "start" ]
